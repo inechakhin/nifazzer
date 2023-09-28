@@ -2,7 +2,7 @@ import os
 import re
 import requests
 from config import BASE_DIR
-from util import find_index_of_char
+from abnf.util import find_index_of_char
 
 
 class Abnf_Parser:
@@ -35,14 +35,14 @@ class Abnf_Parser:
                         i += 1
             i += 1
         abnf = "\n".join(abnf_list)
-        file_path = BASE_DIR + "/rfc/rfc" + rfc_number + ".txt"
+        file_path = BASE_DIR + "/abnf/rfc/rfc" + rfc_number + ".txt"
         with open(file_path, "w") as f:
             f.write(abnf)
         return
 
     # read the abnf list from a given file
     def parse_rule_list(self, rfc_number: str) -> None:
-        file_path = BASE_DIR + "/rfc/rfc" + rfc_number + ".txt"
+        file_path = BASE_DIR + "/abnf/rfc/rfc" + rfc_number + ".txt"
         if not os.path.exists(file_path):
             self.__download_rfc(rfc_number)
 

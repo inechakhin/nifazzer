@@ -1,6 +1,6 @@
 from treelib import Tree
 import re
-from util import find_pair, get_repeat
+from abnf.util import find_pair, get_repeat
 from abnf.abnf_basedata import *
 from config import CONFIG_RULES
 
