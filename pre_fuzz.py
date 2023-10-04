@@ -6,6 +6,7 @@ from optparse import OptionParser
 from abnf.abnf_parser import Abnf_Parser
 from abnf.abnf_generate import Abnf_Generate
 from config import FUZZ_PATH
+from mutation import mutation
 
 
 class MyEncoder(json.JSONEncoder):
@@ -25,7 +26,7 @@ def generate_all(rfc_number: str, rule_name: str, count: str):
     res = []
     for i in range(0, count):
         res.append(my_abnf_generate.generate(rule_name, rfc_number))
-    # res = muation(res)
+    # res = mutation(res)
     data = {}
     data[rule_name] = res
     save_data(data)
