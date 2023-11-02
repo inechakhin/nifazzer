@@ -18,7 +18,7 @@ class MyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-def generate_all(rfc_number: str, rule_name: str, count: str):
+def generate_all(rfc_number: str, rule_name: str, count: str) -> list:
     my_abnf_parser = Abnf_Parser()
     my_abnf_parser.parse_rule_list(rfc_number)
     my_abnf_generate = Abnf_Generate(my_abnf_parser.get_rule_list())
@@ -30,16 +30,12 @@ def generate_all(rfc_number: str, rule_name: str, count: str):
     data = {}
     data[rule_name] = res
     save_data(data)
-
-    print(res)
-
     return res
 
 
-def save_data(data):
+def save_data(data: object) -> None:
     with open(FUZZ_PATH, "w") as f:
         json.dump(data, f, cls=MyEncoder, ensure_ascii=False, indent=4)
-    return
 
 
 def parse_options():
@@ -49,21 +45,21 @@ def parse_options():
         "--rfc",
         dest="rfc",
         default="1738",
-        help="The RFC number of the ABNF rule to be extracted.",
+        help="the RFC number of the ABNF rule to be extracted.",
     )
     parser.add_option(
         "-f",
         "--field",
         dest="field",
         default="url",
-        help="The field to be fuzzed in ABNF rules.",
+        help="the field to be fuzzed in ABNF rules.",
     )
     parser.add_option(
         "-c",
         "--count",
         dest="count",
         default="255",
-        help="The amount of ambiguity data that needs to be generated according to ABNF rules.",
+        help="the amount of ambiguity data that needs to be generated according to ABNF rules.",
     )
     (options, args) = parser.parse_args()
     return options
