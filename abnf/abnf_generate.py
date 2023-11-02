@@ -54,19 +54,10 @@ class Abnf_Generate:
             idx = find_pair(rule, "]", 0)
             self.__parse_rule(rule[1:idx], tree, node.identifier)
         elif rule[0] == "<":
-            reg = re.compile(".*<(?P<name>[^,]*), .*RFC(?P<rfc_num>[0-9]*).*")
-            match = reg.match(rule)
-            if match == None:
-                node = tree.create_node(tag="<>", parent=curr_nid)
-                node = tree.create_node(tag="+", parent=node.identifier)
-                idx = find_pair(rule, ">", 0)
-                self.__parse_rule(rule[1:idx], tree, node.identifier)
-            else:
-                res = match.groupdict()
-                node = tree.create_node(tag="=>", parent=curr_nid)
-                node = tree.create_node(
-                    tag=res["name"] + "," + res["rfc_num"], parent=node.identifier
-                )
+            node = tree.create_node(tag="<>", parent=curr_nid)
+            node = tree.create_node(tag="+", parent=node.identifier)
+            idx = find_pair(rule, ">", 0)
+            self.__parse_rule(rule[1:idx], tree, node.identifier)
         elif rule[0] == "(":
             node = tree.create_node(tag="()", parent=curr_nid)
             node = tree.create_node(tag="+", parent=node.identifier)
@@ -121,7 +112,7 @@ class Abnf_Generate:
         self.__parse_rule(rule[idx + 1 :], tree, curr_nid)
 
     # walk the tree for a random result
-    def __parse_tree(self, tree: Tree, nid: int, rfc_number):
+    def __parse_tree(self, tree: Tree, nid: int, rfc_number) -> bytes:
         tag = tree.get_node(nid).tag
         children = tree.children(nid)
 
@@ -158,25 +149,23 @@ class Abnf_Generate:
         elif tag == "%":
             numeric = Numeric(children[0].tag)
             res = numeric.generate()
-        elif tag == "=>":
-            rule_name, rfc_number = (
-                children[0].tag.split(",")[0],
-                children[0].tag.split(",")[1],
-            )
-            res = self.generate(rule_name, rfc_number)
         else:
             rule_name = tag
             res = self.generate(rule_name, rfc_number)
         return res
 
     # get a random result for a given rule
-    def generate(self, rule_name: str, rfc_number: str):
+    def generate(self, rule_name: str, rfc_number: str) -> bytes:
+        reg = re.compile(".*<(?P<name>[^,]*).*RFC(?P<rfc_num>[0-9]*).*")
         res = b""
         if rule_name in CONFIG_RULES:
             count = len(CONFIG_RULES[rule_name])
             res = CONFIG_RULES[rule_name][random.randint(0, count - 1)].encode()
         elif rule_name in BUILT_IN_RULES:
             res = BUILT_IN_RULES[rule_name].generate()
+        elif reg.match(self.rule_list[rfc_number][rule_name]) is not None:
+            gr_dict = reg.match(self.rule_list[rfc_number][rule_name]).groupdict() 
+            res = self.generate(gr_dict["name"], gr_dict["rfc_num"])
         elif rule_name in self.rule_list[rfc_number]:
             rule = self.rule_list[rfc_number][rule_name]
             tree = Tree()
@@ -185,5 +174,5 @@ class Abnf_Generate:
             self.__parse_rule(rule, tree, node.identifier)
             res = self.__parse_tree(tree, tree.root, rfc_number)
         else:
-            print("Error: unknown rule name <" + rule_name + ">")
+            print("Error: unknown rule name <" + rule_name + "> in RFC " + rfc_number)
         return res
