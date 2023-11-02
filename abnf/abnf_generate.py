@@ -42,7 +42,6 @@ class Abnf_Generate:
                 new_node = tree.create_node(tag="/", parent=parent_node.identifier)
                 subtree = tree.remove_subtree(curr_nid)
                 tree.paste(new_node.identifier, subtree)
-
                 curr_node = tree.create_node(tag="+", parent=new_node.identifier)
                 curr_nid = curr_node.identifier
             else:
@@ -74,34 +73,23 @@ class Abnf_Generate:
         elif rule[0] == "*" or (len(rule) > 1 and rule[1] == "*"):
             reg = re.compile("^(?P<min>[0-9]*)[*](?P<max>[0-9]*)(?P<paren>[(]*)")
             res = reg.match(rule).groupdict()
-            node = tree.create_node(
-                tag="*" + res["min"] + "," + res["max"], parent=curr_nid
-            )
+            tag = "*" + res["min"] + "," + res["max"]
+            node = tree.create_node(tag=tag, parent=curr_nid)
+            tag = res["min"] + "*" + res["max"]
             if res["paren"] != "":
-                idx = find_pair(rule, ")", len(res["min"] + "*" + res["max"]))
-                self.__parse_rule(
-                    rule[len(res["min"] + "*" + res["max"]) : idx + 1],
-                    tree,
-                    node.identifier,
-                )
+                idx = find_pair(rule, ")", len(tag))
+                self.__parse_rule(rule[len(tag) : idx + 1], tree, node.identifier)
             else:
-                idx = find_pair(rule, " ", len(res["min"] + "*" + res["max"]))
-                self.__parse_rule(
-                    rule[len(res["min"] + "*" + res["max"]) : idx],
-                    tree,
-                    node.identifier,
-                )
+                idx = find_pair(rule, " ", len(tag))
+                self.__parse_rule(rule[len(tag) : idx], tree, node.identifier)
         elif rule[0].isdigit():
             reg = re.compile("^(?P<num>[0-9]*)(?P<paren>[(]*)")
             res = reg.match(rule).groupdict()
-            node = tree.create_node(
-                tag="*" + res["num"] + "," + res["num"], parent=curr_nid
-            )
+            tag = "*" + res["num"] + "," + res["num"]
+            node = tree.create_node(tag=tag, parent=curr_nid)
             if res["paren"] != "":
                 idx = find_pair(rule, ")", len(res["num"]))
-                self.__parse_rule(
-                    rule[len(res["num"]) : idx + 1], tree, node.identifier
-                )
+                self.__parse_rule(rule[len(res["num"]) : idx + 1], tree, node.identifier)
             else:
                 idx = find_pair(rule, " ", len(res["num"]))
                 self.__parse_rule(rule[len(res["num"]) : idx], tree, node.identifier)

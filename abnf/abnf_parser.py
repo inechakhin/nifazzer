@@ -71,9 +71,7 @@ class Abnf_Parser:
                 key = line[:i].strip()
                 self.rule_list[rfc_number][key] = line[i + 1 :]
             else:
-                self.rule_list[rfc_number][key] = (
-                    self.rule_list[rfc_number][key] + " " + line
-                )
+                self.rule_list[rfc_number][key] = self.rule_list[rfc_number][key] + " " + line
         f.close()
 
         self.__expand_rule_list(rfc_number)
