@@ -1,7 +1,7 @@
 from treelib import Tree
 import re
 from abnf.util import find_pair, get_repeat
-from abnf.abnf_basedata import *
+from abnf.basedata import *
 from config import CONFIG_RULES
 
 BUILT_IN_RULES = {
