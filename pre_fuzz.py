@@ -3,8 +3,8 @@ import numpy as np
 import traceback
 import sys
 from optparse import OptionParser
-from abnf.abnf_parser import Abnf_Parser
-from abnf.abnf_generate import Abnf_Generate
+from abnf.parser import Abnf_Parser
+from abnf.generate import Abnf_Generate
 from config import FUZZ_PATH
 from mutation import mutation
 
@@ -18,14 +18,19 @@ class MyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-def generate_all(rfc_number: str, rule_name: str, count: str) -> list:
+def generate_all(rfc_number: str, rule_name: str, count: str, parts: str) -> list:
+    list_part = parts.split(",")
     my_abnf_parser = Abnf_Parser()
     my_abnf_parser.parse_rule_list(rfc_number)
-    my_abnf_generate = Abnf_Generate(my_abnf_parser.get_rule_list())
+    my_abnf_generate = Abnf_Generate(my_abnf_parser.get_rule_list(), list_part)
     count = int(count)
     res = []
     for i in range(0, count):
-        res.append(my_abnf_generate.generate(rule_name, rfc_number))
+        generate_res, part_rule = my_abnf_generate.generate(rule_name, rfc_number)
+        if part_rule == {}:
+            res.append(generate_res)
+        else:
+            res.append([generate_res, part_rule])
     # res = mutation(res)
     data = {}
     data[rule_name] = res
@@ -45,21 +50,28 @@ def parse_options():
         "--rfc",
         dest="rfc",
         default="1738",
-        help="the RFC number of the ABNF rule to be extracted.",
+        help="the RFC number of the ABNF rule to be extracted",
     )
     parser.add_option(
         "-f",
         "--field",
         dest="field",
         default="url",
-        help="the field to be fuzzed in ABNF rules.",
+        help="the field to be fuzzed in ABNF rules",
     )
     parser.add_option(
         "-c",
         "--count",
         dest="count",
         default="255",
-        help="the amount of ambiguity data that needs to be generated according to ABNF rules.",
+        help="the amount of ambiguity data that needs to be generated according to ABNF rules",
+    )
+    parser.add_option(
+        "-p",
+        "--parts",
+        dest="parts",
+        default="",
+        help="the parts of field that needs tracking during generated according to ABNF rules"
     )
     (options, args) = parser.parse_args()
     return options
@@ -69,7 +81,7 @@ def main():
     try:
         # banner?
         options = parse_options()
-        generate_all(options.rfc, options.field, options.count)
+        generate_all(options.rfc, options.field, options.count, options.parts)
     except Exception as e:
         traceback.print_exc()
         # print(("Usage: python " + sys.argv[0] + " [Options] use -h for help"))

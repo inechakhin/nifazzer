@@ -25,8 +25,10 @@ BUILT_IN_RULES = {
 
 
 class Abnf_Generate:
-    def __init__(self, rule_list: dict) -> None:
+    def __init__(self, rule_list: dict, list_part: list) -> None:
         self.rule_list = rule_list
+        self.list_part = list_part
+        self.part_rule = {}
 
     # make an expression-tree for a given rule
     def __parse_rule(self, rule: str, tree: Tree, curr_nid: int) -> None:
@@ -139,11 +141,11 @@ class Abnf_Generate:
             res = numeric.generate()
         else:
             rule_name = tag
-            res = self.generate(rule_name, rfc_number)
+            res = self.__generate_res(rule_name, rfc_number)
         return res
 
     # get a random result for a given rule
-    def generate(self, rule_name: str, rfc_number: str) -> bytes:
+    def __generate_res(self, rule_name: str, rfc_number: str) -> bytes:
         reg = re.compile(".*<(?P<name>[^,]*).*RFC(?P<rfc_num>[0-9]*).*")
         res = b""
         if rule_name in CONFIG_RULES:
@@ -153,7 +155,7 @@ class Abnf_Generate:
             res = BUILT_IN_RULES[rule_name].generate()
         elif reg.match(self.rule_list[rfc_number][rule_name]) is not None:
             gr_dict = reg.match(self.rule_list[rfc_number][rule_name]).groupdict() 
-            res = self.generate(gr_dict["name"], gr_dict["rfc_num"])
+            res = self.__generate_res(gr_dict["name"], gr_dict["rfc_num"])
         elif rule_name in self.rule_list[rfc_number]:
             rule = self.rule_list[rfc_number][rule_name]
             tree = Tree()
@@ -163,4 +165,16 @@ class Abnf_Generate:
             res = self.__parse_tree(tree, tree.root, rfc_number)
         else:
             print("Error: unknown rule name <" + rule_name + "> in RFC " + rfc_number)
+        if rule_name in self.part_rule.keys():
+            self.part_rule[rule_name] = res.decode()
         return res
+    
+    # get a random result for a given rule and track part of rule
+    def generate(self, rule_name: str, rfc_number: str) -> tuple:
+        if self.list_part != ['']:
+            for part_name in self.list_part:
+                self.part_rule[part_name] = ""
+        res = self.__generate_res(rule_name, rfc_number)
+        return res, self.part_rule.copy()
+
+    
