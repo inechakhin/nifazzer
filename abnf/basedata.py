@@ -1,7 +1,7 @@
 import random
 
 
-class BaseData:
+class Base_Data:
     data = []
 
     def generate(self):
@@ -9,7 +9,7 @@ class BaseData:
         return self.data[random.randint(0, count - 1)]
 
 
-class Numeric(BaseData):
+class Numeric(Base_Data):
     def __init__(self, value):
         self.data = []
 
@@ -42,7 +42,7 @@ class Numeric(BaseData):
 
 
 # ALPHA = %x41-5A / %x61-7A ; A-Z / a-z.
-class Alpha(BaseData):
+class Alpha(Base_Data):
     def __init__(self):
         self.data = []
         for i in range(0, 26):
@@ -52,7 +52,7 @@ class Alpha(BaseData):
 
 
 # BIT = "0" / "1"
-class Bit(BaseData):
+class Bit(Base_Data):
     def __init__(self):
         self.data = []
         self.data.append(b"0")
@@ -60,7 +60,7 @@ class Bit(BaseData):
 
 
 # CHAR = %x01-7F ; Any 7-bit US-ASCII character, excluding NUL.
-class Char(BaseData):
+class Char(Base_Data):
     def __init__(self):
         self.data = []
         for i in range(0, 0x7F):
@@ -68,21 +68,21 @@ class Char(BaseData):
 
 
 # CR = %x0D ; carriage return, '\r'
-class Cr(BaseData):
+class Cr(Base_Data):
     def __init__(self):
         self.data = []
         self.data.append(b"\x0D")
 
 
 # CRLF =  CR LF ; Internet standard newline, '\r\n'
-class Crlf(BaseData):
+class Crlf(Base_Data):
     def __init__(self):
         self.data = []
         self.data.append(b"\x0D\x0A")
 
 
 # CTL = %x00-1F / %x7F ; controls
-class Ctl(BaseData):
+class Ctl(Base_Data):
     def __init__(self):
         self.data = []
         for i in range(0, 0x1F):
@@ -91,7 +91,7 @@ class Ctl(BaseData):
 
 
 # DIGIT = %x30-39 ; 0-9.
-class Digit(BaseData):
+class Digit(Base_Data):
     def __init__(self):
         self.data = []
         for i in range(0, 10):
@@ -99,14 +99,14 @@ class Digit(BaseData):
 
 
 # DQUOTE = %x22 ; " (Double Quote)
-class Dquote(BaseData):
+class Dquote(Base_Data):
     def __init__(self):
         self.data = []
         self.data.append(b"\x22")
 
 
 # HEXDIG = DIGIT / "A" / "B" / "C" / "D" / "E" / "F"
-class Hexdig(BaseData):
+class Hexdig(Base_Data):
     def __init__(self):
         self.data = []
         for i in range(0, 10):
@@ -116,28 +116,28 @@ class Hexdig(BaseData):
 
 
 # HTAB = %x09 ; horizontal tab, '\t'
-class Htab(BaseData):
+class Htab(Base_Data):
     def __init__(self):
         self.data = []
         self.data.append(b"\x09")
 
 
 # LF = %x0A ; linefeed, '\n'
-class Lf(BaseData):
+class Lf(Base_Data):
     def __init__(self):
         self.data = []
         self.data.append(b"\x0A")
 
 
 # SP = %x20 ; ' '
-class Sp(BaseData):
+class Sp(Base_Data):
     def __init__(self):
         self.data = []
         self.data.append(b"\x20")
 
 
 # WSP = SP / HTAB ; white space
-class Wsp(BaseData):
+class Wsp(Base_Data):
     def __init__(self):
         self.data = []
         self.data.append(b"\x20")
@@ -145,7 +145,7 @@ class Wsp(BaseData):
 
 
 # LWSP = *(WSP / CRLF WSP) ; linear white space (past newline)
-class Lwsp(BaseData):
+class Lwsp(Base_Data):
     wsp = ""
     crlf = ""
 
@@ -165,12 +165,12 @@ class Lwsp(BaseData):
 
 
 # OCTET = %x00-FF ; 8 bits of data
-class Octet(BaseData):
+class Octet(Base_Data):
     def generate(self):
         return chr(random.randint(0x00, 0xFF)).encode("latin1")
 
 
 # VCHAR = %x21-7E ; visible (printing) characters
-class Vchar(BaseData):
+class Vchar(Base_Data):
     def generate(self):
         return chr(random.randint(0x21, 0x7E)).encode()
