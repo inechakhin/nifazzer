@@ -2,7 +2,7 @@ import json
 import numpy as np
 import traceback
 import sys
-from optparse import OptionParser
+from optparse import Values, OptionParser
 from abnf.parser import Abnf_Parser
 from abnf.generate import Abnf_Generate
 from config import FUZZ_PATH
@@ -31,10 +31,7 @@ def generate_all(rfc_number: str, rule_name: str, count: str, parts: str) -> lis
             res.append(generate_res)
         else:
             res.append([generate_res, part_rule])
-    # res = mutation(res)
-    data = {}
-    data[rule_name] = res
-    save_data(data)
+    save_data(res)
     return res
 
 
@@ -43,7 +40,7 @@ def save_data(data: object) -> None:
         json.dump(data, f, cls=MyEncoder, ensure_ascii=False, indent=4)
 
 
-def parse_options():
+def parse_options() -> Values:
     parser = OptionParser()
     parser.add_option(
         "-r",
@@ -79,13 +76,12 @@ def parse_options():
 
 def main():
     try:
-        # banner?
         options = parse_options()
         generate_all(options.rfc, options.field, options.count, options.parts)
     except Exception as e:
         traceback.print_exc()
-        # print(("Usage: python " + sys.argv[0] + " [Options] use -h for help"))
-        # print(("Error: " + str(e)))
+        print(("Usage: python " + sys.argv[0] + " [Options] use -h for help"))
+        print(("Error: " + str(e)))
         sys.exit()
 
 
