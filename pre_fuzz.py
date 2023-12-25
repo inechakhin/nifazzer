@@ -7,7 +7,7 @@ from abnf.parser import Abnf_Parser
 from abnf.generate import Abnf_Generate
 from config import FUZZ_PATH
 from mutation import mutation
-
+from util import banner, loading
 
 class MyEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -31,6 +31,7 @@ def generate_all(rfc_number: str, rule_name: str, count: str, parts: str) -> lis
             res.append(generate_res)
         else:
             res.append([generate_res, part_rule])
+        print("Generating " + loading(i, count), end='\r')
     save_data(res)
     return res
 
@@ -68,7 +69,7 @@ def parse_options() -> Values:
         "--parts",
         dest="parts",
         default="",
-        help="the parts of field that needs tracking during generated according to ABNF rules"
+        help="the parts of field that needs tracking during generated according to ABNF rules",
     )
     (options, args) = parser.parse_args()
     return options
@@ -76,6 +77,7 @@ def parse_options() -> Values:
 
 def main():
     try:
+        print(banner())
         options = parse_options()
         generate_all(options.rfc, options.field, options.count, options.parts)
     except Exception as e:
