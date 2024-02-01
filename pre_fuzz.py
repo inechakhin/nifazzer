@@ -5,7 +5,7 @@ import sys
 from optparse import Values, OptionParser
 from abnf.parser import Abnf_Parser
 from abnf.generate import Abnf_Generate
-from config import FUZZ_PATH
+from config import BASE_DIR
 from mutation import mutation
 from util import banner, loading
 
@@ -18,7 +18,7 @@ class MyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-def generate_all(rfc_number: str, rule_name: str, count: str, parts: str, def_val: str) -> list:
+def generate_all(rfc_number: str, rule_name: str, count: str, parts: str, def_val: str, output: str) -> list:
     list_part = parts.split(",")
     my_abnf_parser = Abnf_Parser()
     my_abnf_parser.parse_rule_list(rfc_number)
@@ -32,11 +32,12 @@ def generate_all(rfc_number: str, rule_name: str, count: str, parts: str, def_va
         else:
             res.append([generate_res, part_rule])
         print("Generating " + loading(i, count), end='\r')
-    save_data(res)
+    save_data(res, output)
     return res
 
 
-def save_data(data: object) -> None:
+def save_data(data: object, output: str) -> None:
+    FUZZ_PATH = BASE_DIR + "/" + output + ".json"
     with open(FUZZ_PATH, "w") as f:
         json.dump(data, f, cls=MyEncoder, ensure_ascii=False, indent=4)
 
@@ -78,6 +79,13 @@ def parse_options() -> Values:
         default="None",
         help="default value for the tracked part (by standard this is None(Null))"
     )
+    parser.add_option(
+        "-o",
+        "--output",
+        dest="output",
+        default="fuzz",
+        help="name of the json file in which the generation result will be saved"
+    )
     (options, args) = parser.parse_args()
     return options
 
@@ -86,7 +94,7 @@ def main():
     try:
         print(banner())
         options = parse_options()
-        generate_all(options.rfc, options.field, options.count, options.parts, options.def_val)
+        generate_all(options.rfc, options.field, options.count, options.parts, options.def_val, options.output)
     except Exception as e:
         traceback.print_exc()
         print(("Usage: python " + sys.argv[0] + " [Options] use -h for help"))
