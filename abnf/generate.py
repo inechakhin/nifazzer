@@ -25,10 +25,11 @@ BUILT_IN_RULES = {
 
 
 class Abnf_Generate:
-    def __init__(self, rule_list: dict, list_part: list) -> None:
+    def __init__(self, rule_list: dict, list_part: list, def_val: str) -> None:
         self.rule_list = rule_list
         self.list_part = list_part
         self.part_rule = {}
+        self.def_val = def_val
 
     # make an expression-tree for a given rule
     def __parse_rule(self, rule: str, tree: Tree, curr_nid: int) -> None:
@@ -173,7 +174,10 @@ class Abnf_Generate:
     def generate(self, rule_name: str, rfc_number: str) -> tuple:
         if self.list_part != ['']:
             for part_name in self.list_part:
-                self.part_rule[part_name] = ""
+                if self.def_val != "None":
+                    self.part_rule[part_name] = self.def_val
+                else:
+                    self.part_rule[part_name] = None
         res = self.__generate_res(rule_name, rfc_number)
         return res, self.part_rule.copy()
 

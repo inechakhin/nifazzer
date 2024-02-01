@@ -18,11 +18,11 @@ class MyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-def generate_all(rfc_number: str, rule_name: str, count: str, parts: str) -> list:
+def generate_all(rfc_number: str, rule_name: str, count: str, parts: str, def_val: str) -> list:
     list_part = parts.split(",")
     my_abnf_parser = Abnf_Parser()
     my_abnf_parser.parse_rule_list(rfc_number)
-    my_abnf_generate = Abnf_Generate(my_abnf_parser.get_rule_list(), list_part)
+    my_abnf_generate = Abnf_Generate(my_abnf_parser.get_rule_list(), list_part, def_val)
     count = int(count)
     res = []
     for i in range(0, count):
@@ -71,6 +71,13 @@ def parse_options() -> Values:
         default="",
         help="the parts of field that needs tracking during generated according to ABNF rules",
     )
+    parser.add_option(
+        "-d",
+        "--default-value",
+        dest="def_val",
+        default="None",
+        help="default value for the tracked part (by standard this is None(Null))"
+    )
     (options, args) = parser.parse_args()
     return options
 
@@ -79,7 +86,7 @@ def main():
     try:
         print(banner())
         options = parse_options()
-        generate_all(options.rfc, options.field, options.count, options.parts)
+        generate_all(options.rfc, options.field, options.count, options.parts, options.def_val)
     except Exception as e:
         traceback.print_exc()
         print(("Usage: python " + sys.argv[0] + " [Options] use -h for help"))
