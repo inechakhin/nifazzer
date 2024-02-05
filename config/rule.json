@@ -35,5 +35,8 @@
         "@a.com:@b.com",
         "@qq.com:@163.com",
         "@gmail.com:@b.com"
+    ],
+    "scheme": [
+        "http"   
     ]
 }
