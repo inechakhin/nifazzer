@@ -26,10 +26,10 @@ class Abnf_Parser:
         pattern = re.compile(r"<.+?>", re.S)
         real_html = pattern.sub("", real_html)
 
-        regex_start_abnf = re.compile("[ ]*[a-zA-Z0-9-]*[ ]* = .*")
+        regex_start_abnf = re.compile("[ ]*[a-zA-Z0-9-_]*[ ]* = .*")
         regex_end_abnf = re.compile("")
 
-        content_list = real_html.split("\n")
+        content_list = real_html.replace(" | ", " / ").replace(" |\n", " /\n").split("\n")
         len_content_list = len(content_list)
         abnf_list = []
         i = 0
