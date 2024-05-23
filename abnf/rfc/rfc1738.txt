@@ -1,0 +1,71 @@
+genericurl     = scheme ":" schemepart
+url            = httpurl / ftpurl / newsurl /
+                 nntpurl / telneturl / gopherurl /
+                 waisurl / mailtourl / fileurl /
+                 prosperourl / otherurl
+otherurl       = genericurl
+scheme         = 1*( lowalpha / digit / "+" / "-" / "." )
+schemepart     = *xchar / ip-schemepart
+ip-schemepart  = "//" login [ "/" urlpath ]
+login          = [ user [ ":" password ] "@" ] hostport
+hostport       = host [ ":" port ]
+host           = hostname / hostnumber
+hostname       = *( domainlabel "." ) toplabel
+domainlabel    = alphadigit / alphadigit *( alphadigit / "-" ) alphadigit
+toplabel       = alpha / alpha *( alphadigit / "-" ) alphadigit
+alphadigit     = alpha / digit
+hostnumber     = digits "." digits "." digits "." digits
+port           = digits
+user           = *( uchar / ";" / "?" / "&amp;" / "=" )
+password       = *( uchar / ";" / "?" / "&amp;" / "=" )
+urlpath        = *xchar    ; depends on protocol see <a href="#section-3.1">section 3.1</a>
+ftpurl         = "ftp://" login [ "/" fpath [ ";type=" ftptype ]]
+fpath          = fsegment *( "/" fsegment )
+fsegment       = *( uchar / "?" / ":" / "@" / "&amp;" / "=" )
+ftptype        = "A" / "I" / "D" / "a" / "i" / "d"
+fileurl        = "file://" [ host / "localhost" ] "/" fpath
+httpurl        = "http://" hostport [ "/" hpath [ "?" search ]]
+hpath          = hsegment *( "/" hsegment )
+hsegment       = *( uchar / ";" / ":" / "@" / "&amp;" / "=" )
+search         = *( uchar / ";" / ":" / "@" / "&amp;" / "=" )
+gopherurl      = "gopher://" hostport [ "/" [ gtype [ selector [ "%09" search [ "%09" gopher+_string ] ] ] ] ]
+gtype          = xchar
+selector       = *xchar
+gopher+_string = *xchar
+mailtourl      = "mailto:" encoded822addr
+encoded822addr = 1*xchar               ; further defined in <a href="./rfc822">RFC822</a>
+newsurl        = "news:" grouppart
+grouppart      = "*" / group / article
+group          = alpha *( alpha / digit / "-" / "." / "+" / "_" )
+article        = 1*( uchar / ";" / "/" / "?" / ":" / "&amp;" / "=" ) "@" host
+nntpurl        = "nntp://" hostport "/" group [ "/" digits ]
+telneturl      = "telnet://" login [ "/" ]
+waisurl        = waisdatabase / waisindex / waisdoc
+waisdatabase   = "wais://" hostport "/" database
+waisindex      = "wais://" hostport "/" database "?" search
+waisdoc        = "wais://" hostport "/" database "/" wtype "/" wpath
+database       = *uchar
+wtype          = *uchar
+wpath          = *uchar
+prosperourl    = "prospero://" hostport "/" ppath *( fieldspec )
+ppath          = psegment *( "/" psegment )
+psegment       = *( uchar / "?" / ":" / "@" / "&amp;" / "=" )
+fieldspec      = ";" fieldname "=" fieldvalue
+fieldname      = *( uchar / "?" / ":" / "@" / "&amp;" )
+fieldvalue     = *( uchar / "?" / ":" / "@" / "&amp;" )
+lowalpha       = %x61-7A
+hialpha        = %x41-5A
+alpha          = lowalpha / hialpha
+digit          = %x30-39
+safe           = "$" / "-" / "_" / "." / "+"
+extra          = "!" / "*" / "'" / "(" / ")" / ","
+national       = "{" / "}" / "|" / "\" / "^" / "~" / "[" / "]" / "`"
+punctuation    = "&lt;" / "&gt;" / "#" / "%" / &lt;"&gt;
+reserved       = ";" / "/" / "?" / ":" / "@" / "&amp;" / "="
+hex            = digit / "A" / "B" / "C" / "D" / "E" / "F" /
+                 "a" / "b" / "c" / "d" / "e" / "f"
+escape         = "%" hex hex
+unreserved     = alpha / digit / safe / extra
+uchar          = unreserved / escape
+xchar          = unreserved / reserved / escape
+digits         = 1*digit
