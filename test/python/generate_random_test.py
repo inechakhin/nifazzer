@@ -27,7 +27,7 @@ def generate_random_url():
             if chr != " ":
                 http += new_chr
         res.append([http])
-    with open("fuzz/random.json", "w") as f:
+    with open("../fuzz/random.json", "w") as f:
         json.dump(res, f, cls=MyEncoder, ensure_ascii=False, indent=4)
 
 

@@ -112,7 +112,7 @@ def test_urllib3_parse_url(url, part_url):
 
 def main():
     num = int(input("Enter number:\n0 - Use urllib urlparse()\n1 - Use urllib3 parse_url()\n"))
-    with open("fuzz/fuzz.json", "r") as json_file:
+    with open("../fuzz/fuzz.json", "r") as json_file:
         list_url = json.load(json_file)
         for t_url in list_url:
             if (num == 0) :

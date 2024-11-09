@@ -50,7 +50,7 @@ def main():
     name = "fuzz"
     if (len(sys.argv) == 2):
         name = sys.argv[1]
-    with open("fuzz/" + name + ".json", "r") as json_file:
+    with open("../fuzz/" + name + ".json", "r") as json_file:
         list_url = json.load(json_file)
         count_full = 0
         count_true1 = 0
