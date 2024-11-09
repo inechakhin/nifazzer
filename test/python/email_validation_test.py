@@ -39,7 +39,7 @@ def email_validator6(email):
 
 
 def main():
-    with open("fuzz/email_fuzz.json", "r") as json_file:
+    with open("../fuzz/email_fuzz.json", "r") as json_file:
         list_email = json.load(json_file)
         count_full = 0
         count_true1 = 0

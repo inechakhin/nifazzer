@@ -21,10 +21,10 @@ python3 pre_fuzz.py -r 3986 -f URI -c 1000 -p scheme,userinfo,host,port,path,que
 
 ### Test
 The tool was tested using libraries for validating and parsing URL-addresses of the following programming languages:
-* [Python](test/)
-* [Go](https://github.com/inechakhin/nifazzer-test-go)
-* [Java](https://github.com/inechakhin/nifazzer-test-java)
-* [NodeJS](https://github.com/inechakhin/nifazzer-test-nodejs)
-* [PHP](https://github.com/inechakhin/nifazzer-test-php)
-* [Perl](https://github.com/inechakhin/nifazzer-test-perl)
-* [Ruby](https://github.com/inechakhin/nifazzer-test-ruby)
+* [Python](test/python/)
+* [Go](test/golang/)
+* [Java](test/java/)
+* [NodeJS](test/nodejs/)
+* [PHP](test/php/)
+* [Perl](test/perl/)
+* [Ruby](test/ruby/)
