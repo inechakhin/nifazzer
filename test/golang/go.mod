@@ -1,4 +1,4 @@
-module github.com/inechakhin/nifazzer-test-go
+module github.com/inechakhin/nifazzer/test/golang
 
 go 1.21.5
 
